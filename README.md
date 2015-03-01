@@ -1,7 +1,5 @@
 # Spark Spec
 
-[![Code Climate](https://codeclimate.com/github/leoromanovsky/spark-spec/badges/gpa.svg)](https://codeclimate.com/github/leoromanovsky/spark-spec)
-
 This project is a collection of utility classes to make ease testing Apache Spark programs.
 
 ```
@@ -49,6 +47,36 @@ I've divided it into two directories:
 
 * core - The library which a developer includes into their project.
 * examples - A standalone sbt project meant to be fully transferable.
+
+## Getting Started
+
+In your Build.scala: 
+
+```
+libraryDependencies ++= Seq("com.leoromanovsky" %% "spark-spec-core" % "0.0.1-SNAPSHOT" % "test")
+```
+
+Add a spec to test `MyETLJob` class:
+
+```
+package com.strava.discovery.etl
+
+import com.leoromanovsky.sparkspec.core.SparkSpecUtils
+import org.scalatest.ShouldMatchers
+import com.foo.etl.MyETLJob
+
+class MyETLJobSpec extends SparkSpecUtils with ShouldMatchers {
+  sparkTest("my etl") {
+    val results = MyETLJob.runJob(sc, config)
+    println("Result:", results)
+    results should be (1)
+  }
+}
+```
+
+The test passed in a `SparkContext` and `Config` as `sc` and `config`, respectfully.
+
+## Contributing
 
 I welcome feedback, issue reports and pull requests.
 

@@ -6,7 +6,6 @@ import bintray.Keys._
 
 object BuildSettings {
   val buildSettings = Seq(
-    name := "spark-spec",
     organization := "com.leoromanovsky",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.10.4",
@@ -21,21 +20,32 @@ object BuildSettings {
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % "1.1.1",
       "com.typesafe" % "config" % "1.2.1",
-      "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+      "org.scalatest" %% "scalatest" % "2.2.1"
     )
   )
 }
 
 object SparkSpecBuild extends Build {
+  lazy val root = Project(
+    "root",
+    file("."),
+    settings = BuildSettings.buildSettings ++ Seq(
+      name := "spark-spec",
+      run <<= run in Compile in core)
+  ).aggregate(core, examples)
+  
   lazy val core = Project(
     "core", 
     file("core"),
-    settings = BuildSettings.buildSettings ++ bintraySettings)
+    settings = BuildSettings.buildSettings ++ bintraySettings ++ Seq(
+      name := "spark-spec-core"
+    ))
   
   lazy val examples = Project(
     "examples", 
     file("examples"),
     settings = BuildSettings.buildSettings ++ bintraySettings ++ Seq(
+      name := "spark-spec-examples",
       libraryDependencies ++= Seq(
         "mysql" % "mysql-connector-java" % "5.1.34",
         "com.typesafe.slick" %% "slick" % "2.1.0"
@@ -44,5 +54,5 @@ object SparkSpecBuild extends Build {
       publishLocal := (),
       packagedArtifacts := Map.empty
     )
-  )
+  ).dependsOn(core)
 }

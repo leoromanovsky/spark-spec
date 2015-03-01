@@ -1,5 +1,7 @@
 # Spark Spec
 
+[![Code Climate](https://codeclimate.com/github/leoromanovsky/spark-spec/badges/gpa.svg)](https://codeclimate.com/github/leoromanovsky/spark-spec)
+
 This project is a collection of utility classes to make ease testing Apache Spark programs.
 
 ```

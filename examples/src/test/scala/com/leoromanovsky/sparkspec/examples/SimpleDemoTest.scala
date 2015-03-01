@@ -31,4 +31,11 @@ class SimpleDemoTest extends SparkSpecUtils with ShouldMatchers {
     println("Result:", result)
     result should be (76923)
   }
+
+  sparkTest("spark filter mod 21") {
+    val data = sc.parallelize(1 to 1e6.toInt)
+    val result = data.filter{_ % 21 == 0}.count
+    println("Result:", result)
+    result should be (47619)
+  }
 }

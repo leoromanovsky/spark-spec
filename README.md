@@ -1,6 +1,8 @@
 # Spark Spec
 
-This project is a collection of utility classes to make ease testing Apache Spark programs.
+This project is a collection of utilities to help test ![Apache Spark](https://spark.apache.org) programs.
+
+Run full integration tests of your jobs:
 
 ```
 class SimpleExampleSpec extends SparkSpecUtils with ShouldMatchers {
@@ -13,22 +15,11 @@ class SimpleExampleSpec extends SparkSpecUtils with ShouldMatchers {
 }
 
 > test-only com.strava.discovery.SimpleSparkTest
-Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
-15/03/01 12:02:05 INFO SecurityManager: Changing view acls to: foo
+15/03/01 12:02:07 INFO SparkContext: Successfully started SparkContext
 ...
 ...
-15/03/01 12:02:07 INFO DAGScheduler: Stage 0 (count at SimpleSparkTest.scala:9) finished in 0.095 s
-15/03/01 12:02:07 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool
 15/03/01 12:02:07 INFO SparkContext: Job finished: count at SimpleSparkTest.scala:9, took 0.206779 s
 (Result:,500000)
-15/03/01 12:02:07 INFO SparkUI: Stopped Spark web UI at http://192.168.8.103:4040
-15/03/01 12:02:07 INFO DAGScheduler: Stopping DAGScheduler
-15/03/01 12:02:08 INFO MapOutputTrackerMasterActor: MapOutputTrackerActor stopped!
-15/03/01 12:02:08 INFO ConnectionManager: Selector thread was interrupted!
-15/03/01 12:02:08 INFO ConnectionManager: ConnectionManager stopped
-15/03/01 12:02:08 INFO MemoryStore: MemoryStore cleared
-15/03/01 12:02:08 INFO BlockManager: BlockManager stopped
-15/03/01 12:02:08 INFO BlockManagerMaster: BlockManagerMaster stopped
 15/03/01 12:02:08 INFO SparkContext: Successfully stopped SparkContext
 [info] SimpleSparkTest:
 [info] - spark filter
@@ -40,8 +31,7 @@ Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
 [success] Total time: 4 s, completed Mar 1, 2015 12:02:08 PM
 ```
 
-The Spark cluster was launched in local mode behind the scenes, kept around for the duration of the specs in the 
-class, and shutdown afterwards.
+In the example, a Spark cluster was launched in local mode, kept around for the duration of the specs and shutdown afterwards.
 
 I've divided it into two directories:
 
@@ -50,18 +40,21 @@ I've divided it into two directories:
 
 ## Getting Started
 
-In your Build.scala: 
+In your Build.scala, at a new dependency: 
 
 ```
 libraryDependencies ++= Seq("com.leoromanovsky" %% "spark-spec-core" % "0.0.1-SNAPSHOT" % "test")
 ```
 
+The project is built against Scala v2.10.4.
+
 Add a spec to test `MyETLJob` class:
 
 ```
-package com.strava.discovery.etl
+package com.foo.etl
 
 import com.leoromanovsky.sparkspec.core.SparkSpecUtils
+
 import org.scalatest.ShouldMatchers
 import com.foo.etl.MyETLJob
 
@@ -79,5 +72,3 @@ The test passed in a `SparkContext` and `Config` as `sc` and `config`, respectfu
 ## Contributing
 
 I welcome feedback, issue reports and pull requests.
-
-Leo

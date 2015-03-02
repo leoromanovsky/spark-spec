@@ -1,19 +1,16 @@
-import bintray.Plugin._
 import sbt._
 import sbt.Build
 import sbt.Keys._
-import bintray.Keys._
 
-object BuildSettings {
+object SparkSpecBuild extends Build {
   val buildSettings = Seq(
-    organization := "com.leoromanovsky",
+    name := "spark-spec",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.10.4",
+    crossScalaVersions := Seq("2.11.4", "2.10.4"),
+    organization := "com.github.leoromanovsky",
     licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
-    publishMavenStyle := true,
-    repository in bintray := "maven",
-    packageLabels in bintray := Seq("spark"),
-    bintrayOrganization in bintray := None,
+    homepage := Some(url("https://github.com/leoromanovsky/spark-spec")),
     resolvers ++= Seq(
       "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
     ),
@@ -23,36 +20,58 @@ object BuildSettings {
       "org.scalatest" %% "scalatest" % "2.2.1"
     )
   )
-}
-
-object SparkSpecBuild extends Build {
+  
   lazy val root = Project(
-    "root",
-    file("."),
-    settings = BuildSettings.buildSettings ++ Seq(
+    id = "root",
+    base = file("."),
+    settings = Seq(
       name := "spark-spec",
-      run <<= run in Compile in core)
-  ).aggregate(core, examples)
-  
-  lazy val core = Project(
-    "core", 
-    file("core"),
-    settings = BuildSettings.buildSettings ++ bintraySettings ++ Seq(
-      name := "spark-spec-core"
-    ))
-  
-  lazy val examples = Project(
-    "examples", 
-    file("examples"),
-    settings = BuildSettings.buildSettings ++ bintraySettings ++ Seq(
-      name := "spark-spec-examples",
-      libraryDependencies ++= Seq(
-        "mysql" % "mysql-connector-java" % "5.1.34",
-        "com.typesafe.slick" %% "slick" % "2.1.0"
+      version := "0.0.1-SNAPSHOT",
+      scalaVersion := "2.10.4",
+      crossScalaVersions := Seq("2.11.4", "2.10.4"),
+      organization := "com.github.leoromanovsky",
+      homepage := Some(url("https://github.com/leoromanovsky/spark-spec")),
+      resolvers ++= Seq(
+        "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
       ),
-      publish := (),
-      publishLocal := (),
-      packagedArtifacts := Map.empty
+      libraryDependencies ++= Seq(
+        "org.apache.spark" %% "spark-core" % "1.1.1",
+        "com.typesafe" % "config" % "1.2.1",
+        "org.scalatest" %% "scalatest" % "2.2.1"
+      ),
+      pomIncludeRepository := {
+        _ => false
+      },
+      publishTo <<= version { (v: String) =>
+        val nexus = "https://oss.sonatype.org/"
+        if (v.trim.endsWith("SNAPSHOT"))
+          Some("snapshots" at nexus + "content/repositories/snapshots")
+        else
+          Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+      },
+      publishArtifact in Test := false,
+      publishMavenStyle := true
     )
-  ).dependsOn(core)
+  )
+
+  val _pomExtra =
+    <url>http://github.com/leoromanovsky/spark-spec</url>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
+      <scm>
+        <url>git@github.com:leoromanovsky/spark-spec.git</url>
+        <connection>scm:git:git@github.com:leoromanovsky/spark-spec.git</connection>
+      </scm>
+      <developers>
+        <developer>
+          <id>leoromanovsky</id>
+          <name>leo Romanovsky</name>
+          <url>http://leoromanovsky.github.com</url>
+        </developer>
+      </developers>
 }

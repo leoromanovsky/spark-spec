@@ -1,13 +1,9 @@
-package com.leoromanovsky.sparkspec.core
+package com.github.leoromanovsky
 
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigFactory
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.log4j._
 import org.apache.spark.SparkContext
-import org.apache.spark.SparkContext._
 import org.scalatest.FunSuite
-import com.typesafe.config.Config
 
 object SparkTest extends org.scalatest.Tag("com.leoromanovsky.sparkspec.core.tags.SparkTest")
 

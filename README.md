@@ -1,5 +1,7 @@
 # Spark Spec
 
+[![Build Status](https://travis-ci.org/leoromanovsky/spark-spec.svg?branch=master)](https://travis-ci.org/leoromanovsky/spark-spec)
+
 This project is a collection of utilities to help test [Apache Spark](https://spark.apache.org) programs.
 
 Run full integration tests of your jobs:
@@ -43,26 +45,60 @@ I've divided it into two directories:
 In your Build.scala, at a new dependency: 
 
 ```
-libraryDependencies ++= Seq("com.leoromanovsky" %% "spark-spec-core" % "0.0.1-SNAPSHOT" % "test")
+resolvers ++= Seq("Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
+
+libraryDependencies ++= Seq("com.github.leoromanovsky" %% "spark-spec" % "0.0.1-SNAPSHOT" % "test")
 ```
 
 The project is built against Scala v2.10.4.
+
+## Example spec
+
+For the ETL job `MyETLJob`:
+
+```
+object MyETLJob extends SparkJob {
+  ...
+  override def runJob(sc: SparkContext, config: Config): Long = {
+    val outputWritePath = "foo"
+  
+    ...
+
+    perform(rdd)
+    
+    ...
+  }
+  
+  def perform(rdd: RDD[SomeCaseClass]): RDD[String] = {
+    rdd.map { r => 
+      s"${r.id},${r.userId},${r.distance},${r.elevationGain}"
+    }
+  }
+}
+```
 
 Add a spec to test `MyETLJob` class:
 
 ```
 package com.foo.etl
 
-import com.leoromanovsky.sparkspec.core.SparkSpecUtils
+import com.github.leoromanovsky.sparkspec.SparkSpecUtils
 
 import org.scalatest.ShouldMatchers
 import com.foo.etl.MyETLJob
 
 class MyETLJobSpec extends SparkSpecUtils with ShouldMatchers {
   sparkTest("my etl") {
-    val results = MyETLJob.runJob(sc, config)
-    println("Result:", results)
-    results should be (1)
+    # Create input data
+    val input = Seq(
+      SomeCaseClass(1, 2, 3),
+      SomeCaseClass(4, 5, 6),
+    )
+    val inputRDD = sc.parallelize(input)
+    
+    # Use the newly created RDD.
+    val results = MyETLJob.perform(inputRDD, sc).collect()
+    results.size should be (2)
   }
 }
 ```

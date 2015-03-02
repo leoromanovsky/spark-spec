@@ -28,7 +28,6 @@ object SparkSpecBuild extends Build {
       name := "spark-spec",
       version := "0.0.1-SNAPSHOT",
       scalaVersion := "2.10.4",
-      crossScalaVersions := Seq("2.11.4", "2.10.4"),
       organization := "com.github.leoromanovsky",
       homepage := Some(url("https://github.com/leoromanovsky/spark-spec")),
       resolvers ++= Seq(

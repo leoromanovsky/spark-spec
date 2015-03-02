@@ -1,6 +1,6 @@
 # Spark Spec
 
-This project is a collection of utilities to help test ![Apache Spark](https://spark.apache.org) programs.
+This project is a collection of utilities to help test [Apache Spark](https://spark.apache.org) programs.
 
 Run full integration tests of your jobs:
 
